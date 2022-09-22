@@ -8,7 +8,7 @@ public class ChatController {
 
     @RequestMapping("/chatting")
     public String chatting(){
-        return "/chatting";
+        return "chatting";
     }
 
 }
