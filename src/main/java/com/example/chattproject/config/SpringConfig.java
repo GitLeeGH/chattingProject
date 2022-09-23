@@ -1,9 +1,13 @@
 package com.example.chattproject.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+@Configuration
+@EnableWebSocketMessageBroker
 public class SpringConfig implements WebSocketMessageBrokerConfigurer {
 
     // 웹 소켓 연결을 위한 엔드포인트 설정 및 stomp sub/pub 엔드 포인트 설정
