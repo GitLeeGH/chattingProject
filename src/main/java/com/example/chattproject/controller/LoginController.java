@@ -8,6 +8,8 @@ public class LoginController {
 
     @GetMapping("/chatlogin")
     public String goLogin(){
+        System.out.println("login");
+
         return "/chatlogin";
     }
 }
