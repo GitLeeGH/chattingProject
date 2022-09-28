@@ -1,4 +1,4 @@
-package com.example.example.controller;
+package com.example.chattproject.controller;
 
 
 import lombok.extern.log4j.Log4j2;
