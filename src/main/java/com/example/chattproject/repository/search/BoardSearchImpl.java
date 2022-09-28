@@ -2,9 +2,12 @@ package com.example.chattproject.repository.search;
 
 import com.example.chattproject.domain.entity.Board;
 import com.example.chattproject.domain.entity.QBoard;
+import com.example.chattproject.domain.entity.QReply;
 import com.example.chattproject.dto.BoardDTO;
+import com.example.chattproject.dto.BoardListReplyCountDTO;
 import com.example.chattproject.repository.BoardRepository;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -85,6 +88,61 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         long count = query.fetchCount();
 
         return new PageImpl<>(list, pageable, count);
+    }
+
+    @Override
+    public Page<BoardListReplyCountDTO> searchWithReplyCount(String[] types, String keyword, Pageable pageable) {
+
+        QBoard board = QBoard.board;
+        QReply reply = QReply.reply;
+
+        JPQLQuery<Board> query = from(board);
+        query.leftJoin(reply).on(reply.board.eq(board));
+
+        query.groupBy(board);
+
+        if( (types != null && types.length >0) && keyword != null){     // 검색조건과 키워드가 있으면
+
+            BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+            for(String type : types){
+
+                switch (type){
+                    case "t" :
+                        booleanBuilder.or(board.title.contains(keyword));
+                        break;
+                    case "c" :
+                        booleanBuilder.or(board.content.contains(keyword));
+                        break;
+                    case "w" :
+                        booleanBuilder.or(board.writer.contains(keyword));
+                        break;
+                }
+            }// end for
+            query.where(booleanBuilder);
+
+        }// end if
+
+        // bno > 0
+        query.where(board.bno.gt(0L));
+
+        JPQLQuery<BoardListReplyCountDTO> dtojpqlQuery = query.select(Projections.bean(BoardListReplyCountDTO.class
+        ,
+                board.bno,
+                board.title,
+                board.writer,
+                board.regDate,
+                reply.count().as("replyCount")
+                ));
+
+        this.getQuerydsl().applyPagination(pageable,dtojpqlQuery);
+
+        List<BoardListReplyCountDTO> dtoList = dtojpqlQuery.fetch();
+
+        long count = dtojpqlQuery.fetchCount();
+
+        return new PageImpl<>(dtoList, pageable, count);
+
     }
 
 

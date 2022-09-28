@@ -2,10 +2,10 @@ package com.example.chattproject.service;
 
 import com.example.chattproject.domain.entity.Board;
 import com.example.chattproject.dto.BoardDTO;
+import com.example.chattproject.dto.BoardListReplyCountDTO;
 import com.example.chattproject.dto.PageRequestDTO;
 import com.example.chattproject.dto.PageResponseDTO;
 import com.example.chattproject.repository.BoardRepository;
-import javafx.beans.property.StringProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -87,6 +87,23 @@ public class BoardServiceImpl implements BoardService{
                 .dtoList(dtoList)
                 .total((int)result.getTotalElements())
                 .build();
+    }
+
+    @Override
+    public PageResponseDTO<BoardListReplyCountDTO> listWithReplyCount(PageRequestDTO pageRequestDTO) {
+
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        Pageable pageable = pageRequestDTO.getPageable("bno");
+
+        Page<BoardListReplyCountDTO> result = boardRepository.searchWithReplyCount(types, keyword, pageable);
+
+        return PageResponseDTO.<BoardListReplyCountDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(result.getContent())
+                .total((int)result.getTotalElements())
+                .build();
+
     }
 
 

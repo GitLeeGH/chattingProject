@@ -47,17 +47,17 @@
                         </tr>
 
                         </thead>
-                        <tbody>
-                      <tr th:each="dto:${responseDTO.dtoList}">
-
+                        <tbody th:with="link = ${pageRequestDTO.getLink()}">
+                        <tr th:each="dto:${responseDTO.dtoList}">
                             <th scope="row">[[${dto.bno}]]</th>
                             <td>
-                                [[${dto.title}]]
+                                <a th:href="|@{/board/read(bno = ${dto.bno})}&${link}"> [[${dto.title}]]</a>
+                                <span class="badge progress-bar-success" style="background-color: #0a53be;">[[${dto.replyCount}]]</span>
                             </td>
                             <td>[[${dto.writer}]]</td>
                             <!--thymleaf 주석  -->
                             <!--/* */-->
-<!--/*                            <td>[[${dto.regDate}]]</td>*/-->
+                            <!--/*                            <td>[[${dto.regDate}]]</td>*/-->
                             <!--날짜 포멧 변경-->
                             <td>[[${#temporals.format(dto.regDate, 'yyyy-MM-dd')}]]</td>
 
@@ -77,7 +77,7 @@
                                 <li th:class="${responseDTO.page == i}?'page-item active': 'page-item'">
                                     <a class="page-link" th:data-num="${i}">[[${i}]]</a>
                                 </li>
-                            <!-- data-num = > 페이지 번호 처리 -->
+                                <!-- data-num = > 페이지 번호 처리 -->
                             </th:block>
 
                             <li class="page-item" th:if="${responseDTO.next}">
@@ -115,13 +115,13 @@
 
     console.log("script start")
 
-    document.querySelector(".pagination").addEventListener("click", function (e){
+    document.querySelector(".pagination").addEventListener("click", function (e) {
         e.preventDefault()
         e.stopPropagation()
 
         const target = e.target;
 
-        if(target.tagName !== 'A'){
+        if (target.tagName !== 'A') {
             return
         }
 
@@ -132,22 +132,21 @@
         formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
 
         formObj.submit();
-    },false)
+    }, false)
 
-    document.querySelector(".clearBtn").addEventListener("click",function (e){
+    document.querySelector(".clearBtn").addEventListener("click", function (e) {
         e.preventDefault()
         e.stopPropagation()
 
-        self.location ='/board/list'
-    },false)
+        self.location = '/board/list'
+    }, false)
 
     //show modal
     const result = [[${result}]]
 
     const modal = new bootstrap.Modal(document.querySelector("#registerModal"))
 
-    if(result)
-    {
+    if (result) {
         modal.show()
     }
 </script>
