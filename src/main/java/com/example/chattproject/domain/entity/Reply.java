@@ -23,6 +23,7 @@ public class Reply extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
+    private Long bno;
     private String replyText;
 
     private String replyer;

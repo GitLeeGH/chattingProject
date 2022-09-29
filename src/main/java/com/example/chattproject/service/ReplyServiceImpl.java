@@ -1,5 +1,6 @@
 package com.example.chattproject.service;
 
+import com.example.chattproject.domain.entity.Board;
 import com.example.chattproject.domain.entity.Reply;
 import com.example.chattproject.dto.PageRequestDTO;
 import com.example.chattproject.dto.PageResponseDTO;
@@ -31,9 +32,21 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     public Long register(ReplyDTO replyDTO) {
 
+        // 왜 bno 를 못 받지?
         Reply reply = modelMapper.map(replyDTO, Reply.class);
+        System.out.println("reply : " + reply);
+        Board board = Board.builder()
+                .bno(replyDTO.getBno()).build();
 
-        Long rno = replyRepository.save(reply).getRno();
+        Reply reply1 = Reply.builder()
+                        .board(board)
+                        .replyText(replyDTO.getReplyText())
+                        .replyer(replyDTO.getReplyer()).build();
+        System.out.println("reply1 : " + reply1);
+
+        Long rno = replyRepository.save(reply1).getRno();
+
+
 
         return rno;
     }
