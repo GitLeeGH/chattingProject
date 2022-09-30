@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
->
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>ChatProject</title>
@@ -227,6 +227,21 @@
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item dropdown no-arrow mx-1">
+                        <a sec:authorize="isAnonymous()" class="nav-link" th:href="@{/account/login}">로그인</a>
+                    </li>
+                    <li class="nav-item dropdown no-arrow mx-1">
+                        <form id="logout" th:action="@{/logout}" method="POST" sec:authorize="isAuthenticated()">
+                            <a class="nav-link" href="/" onclick="document.getElementById('logout').submit();">로그아웃</a>
+                            <!--                    <a class="nav-link text-white" th:href="@{/logout}">로그아웃</a>-->
+                        </form>
+
+                    </li>
+                    <li class="nav-item dropdown no-arrow mx-1">
+                        <a class="nav-link" th:href="@{/account/register}"sec:authorize="!isAuthenticated()">회원가입</a>
+                    </li>
+
 
                     <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                     <li class="nav-item dropdown no-arrow d-sm-none">
