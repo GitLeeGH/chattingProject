@@ -11,25 +11,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.constraints.NotBlank;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/account")
 public class AccountController {
-    @GetMapping("/")
-    public String main() {
-        return "index";
-    }
+//    @GetMapping("/")
+//    public String main() {
+//        return "index";
+//    }
 
-    @NotBlank(message = "필수 입력 항목")
+
     @Autowired
     private UserService userService;
 
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return "account/login";
     }
 
     @GetMapping("/register")
     public String register() {
-        return "register";
+        return "account/register";
     }
 
     @PostMapping("/register")
