@@ -1,7 +1,15 @@
 package com.example.chattproject.controller;
 
 import com.example.chattproject.dao.ChatRepository;
+import com.example.chattproject.domain.entity.ChatRoomEntity;
 import com.example.chattproject.dto.ChatDTO;
+import com.example.chattproject.dto.ChatRoom;
+import com.example.chattproject.dto.ChatRoomDTO;
+import com.example.chattproject.repository.ChatRoomEntityRepository;
+import com.example.chattproject.service.ChatService;
+import com.example.chattproject.vo.ChatMEmberListVO;
+import com.example.chattproject.vo.ChatMessageVO;
+import com.example.chattproject.vo.ChatRoomVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +20,16 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ChatController
@@ -42,6 +53,13 @@ public class ChatController {
     // 아래에서 사용되는 convertAndSend 를 사용하기 위해서 서언
     // convertAndSend 는 객체를 인자로 넘겨주면 자동으로 Message 객체로 변환 후 도착지로 전송한다.
     private final SimpMessageSendingOperations template;
+    private final ChatService cs;
+
+    @Autowired
+    ChatRoomEntityRepository chatRoomEntityRepository;
+
+    @Inject     // byType으로 자동 주입
+    ChatService service;
 
     @Autowired
     ChatRepository repository;
@@ -73,6 +91,8 @@ public class ChatController {
         log.info("CHAT {}", chat);
         chat.setMessage(chat.getMessage());
         template.convertAndSend("/sub/chat/room/" + chat.getRoomId(), chat);
+
+//        ChatRoomEntity chatRoomEntity = chatRoomEntityRepository.findByRoomId(chat.getRoomId());
 
     }
 
@@ -129,4 +149,99 @@ public class ChatController {
 
         return userName;
     }
+
+    // 채팅방 참가
+    @RequestMapping(value = "/roomJoin")
+    public String roomJoin(@RequestParam("roomId") int roomId, Principal principal, ChatMEmberListVO chatMEmberListVO, Model model, HttpServletRequest request){
+
+        log.info("room join -----------------------------------");
+
+        // 로그인 아이디
+        chatMEmberListVO.setMemberId(principal.getName());
+        if(service.chatCheck(chatMEmberListVO) == 0) {
+            service.roomJoin(chatMEmberListVO);
+        }
+
+        // 채팅방 정보 불러오기
+        ChatRoomVO chatRoomVO = service.selectChattingDetail(roomId);
+        model.addAttribute("selectMyChatting", chatRoomVO);
+        model.addAttribute("chatCheck",service.chatCheck(chatMEmberListVO));
+
+        System.out.println("model : " + model);
+
+        return "redirect:/selectMessage?roomId="+ roomId;
+    }
+
+    // 해당 방의 메세지 조회
+    @RequestMapping("/selectMessage")
+    public String selectMessage(@RequestParam("roomId") int seq, Model model) {
+        List<ChatMessageVO> cm = service.selectMessage(seq);
+        model.addAttribute("selectMessage", cm);
+        ChatRoomVO cr = service.selectChattingDetail(seq);
+        model.addAttribute("selectChattingDetail", cr);
+        return "chatting/chattingdetail";
+    }
+
+//    @RequestMapping("/selectMessage")
+//    public String selectMessage(@RequestParam("roomId") int roomId, Model model){
+//
+//    }
+
+
+    //나의 멘토링 조회
+    @GetMapping("/mentoring/myMentoring/{memberId}")
+    public String myMentoring(@PathVariable ("memberId") String memberId,Model model){
+
+        //채팅방 목록 불러오기
+        model.addAttribute("rooms", cs.findAllRooms());
+
+
+        return "mentoring/myMentoring";
+    }
+
+    //채팅방 개설
+    @PostMapping(value = "/room")
+    public String create(@RequestParam String roomName, @RequestParam Long password, HttpSession session,Model model, Principal principal){
+//        Long memberId = (Long) session.getAttribute(LOGIN_ID);
+        String memberNick = principal.getName();
+
+        log.info("# Create Chat Room , name: " + roomName);
+
+        cs.createChatRoomDTO(roomName,memberNick,password);
+        System.out.println("저장완료");
+
+        return "redirect:/mentoring/myMentoring/"+principal.getName();
+    }
+
+    //채팅방 조회
+    @GetMapping("/room")
+    public void getRoom(String roomId, Model model,HttpSession session , Principal principal){
+        //        Long memberId = (Long) session.getAttribute(LOGIN_ID);
+        //        String memberProfileName = ms.findById(memberId).getMemberProfileName();
+        //        model.addAttribute("memberProfileName",memberProfileName);
+        System.out.println("여기 오류니?");
+        log.info("# get Chat Room, roomID : " + roomId);
+
+
+        ChatRoomEntity chatRoomEntity = (ChatRoomEntity) cs.findRoomByRoomId(roomId);
+        ChatRoomDTO chatRoomDTO = new ChatRoomDTO();
+        chatRoomDTO.setRoomId(chatRoomEntity.getRoomId());
+        chatRoomDTO.setChatMentor(chatRoomEntity.getChatMentor());
+        chatRoomDTO.setName(chatRoomEntity.getRoomName());
+        chatRoomDTO.setPassword(chatRoomEntity.getPassword());
+
+        System.out.println(chatRoomDTO);
+
+//        model.addAttribute("room", cs.findRoomByRoomId(roomId));
+        model.addAttribute("room",chatRoomEntity);
+
+    }
+
+
+
+
+
+
+
+
 }

@@ -59,6 +59,7 @@ public class ChatRepository {
         // map에 채팅룸 아이디와 만들어진 채팅룸을 저장
         chatRoomMap.put(chatRoom.getRoomId(), chatRoom);
 
+
         return chatRoom;
     }
 

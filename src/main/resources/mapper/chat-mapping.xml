@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.chattproject.mapper.ChatMapper">
+
+<!--      채팅방 개설-->
+    <insert id="creatRoom">
+			<![CDATA[
+        INSERT INTO chatroom(
+            roomId,
+            TITLE
+        )
+        VALUES(
+                  #{roomId},
+                  #{title}
+              )
+        ]]>
+    </insert>
+
+    <!-- 채팅방 방장 참가 -->
+    <insert id = "joinRoomMaster">
+       	<![CDATA[
+        INSERT INTO ChatMemberList(
+            roomId,
+            memberId
+        )
+        VALUES(
+                  #{roomId},
+                  #{memberId}
+              )
+        ]]>
+
+    </insert>
+
+    <!--채팅 참가 리스트 확인 -->
+    <select id = "chatCheck" parameterType="com.example.chattproject.vo.ChatMEmberListVO" resultType="int">
+        <![CDATA[
+            SELECT COUNT(*) FROM chatmemberlist WHERE roomId = #{roomId} and memberId =#{memberId};
+
+        ]]>
+
+    </select>
+
+    <!-- 해당방의 정보 조회 -->
+    <select id="selectChattingDetail" parameterType="int" resultType="com.example.chattproject.vo.ChatRoomVO">
+        <![CDATA[
+            SELECT * FROM chatroom where roomId=#{roomId};
+
+        ]]>
+    </select>
+
+    <!-- 채팅방 참가 -->
+    <insert id = "roomJoin">
+        <![CDATA[
+            INSERT INTO chatmemberlist(
+                                       roomId,
+                                       memberId
+            )
+            VALUES (
+                    #{roomId},
+                    #{memberId}
+                   )
+        ]]>
+
+    </insert>
+
+    <!-- 해당방의 메세지 조회 -->
+    <select id="selectMessage" parameterType="int" resultType="com.example.chattproject.vo.ChatMessageVO">
+		      <![CDATA[
+        SELECT * FROM chatmessage A
+                          JOIN CHATROOM B
+                               ON A.ROOMID=B.ROOMID
+        where A.roomId=#{roomId};
+
+
+        ]]>
+		   </select>
+
+
+
+
+</mapper>

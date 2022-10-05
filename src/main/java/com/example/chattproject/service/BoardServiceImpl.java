@@ -25,6 +25,8 @@ public class BoardServiceImpl implements BoardService{
 
     private final BoardRepository boardRepository;
 
+    private BoardService boardService;
+
     @Override
     public Long register(BoardDTO boardDTO) {
 
