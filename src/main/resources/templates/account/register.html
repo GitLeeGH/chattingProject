@@ -19,9 +19,9 @@
 <form class="form-signin" th:action="@{/account/register}" method="post">
   <a th:href="@{/}"><img class="mb-4" src="https://getbootstrap.com/docs/4.5/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"></a>
   <h1 class="h3 mb-3 font-weight-normal">회원가입</h1>
-  <label for="email" class="sr-only">email</label>
+<!--  <label for="email" class="sr-only">이메일을 입력하세요.</label>-->
   <div class="input-group mb-3">
-    <input type="email" class="form-control" placeholder="email" id="email" name="email" required autofocus aria-describedby="basic-addon2">
+    <input type="email" class="form-control" placeholder="이메일을 입력하세요." id="email" name="email" required autofocus aria-describedby="basic-addon2">
     <span class="input-group-text" type="button" id="basic-addon2">중복체크</span>
   </div>
 
@@ -72,7 +72,7 @@
   //   })
   // });
   $.ajax({
-    url: baseUrl + '/account/email/check',
+    url: '/account/email/check',
     type: 'GET',
     contentType: 'application/json',
     headers: {
