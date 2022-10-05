@@ -1,5 +1,6 @@
 package com.example.chattproject.controller;
 
+import com.example.chattproject.exception.BadRequestException;
 import com.example.chattproject.repository.UserRepository;
 import com.example.chattproject.domain.entity.User;
 import com.example.chattproject.service.UserService;
@@ -55,12 +56,12 @@ public class AccountController {
 
     // 아이디 중복 체크
     @GetMapping("/email/check")
-    public ResponseEntity<?> checkEmailDuplicattion(@RequestParam(value="email")String email) throws BadRequestException{
+    public ResponseEntity<?> checkEmailDuplication(@RequestParam(value="email")String email) throws BadRequestException {
         System.out.println(email);
         if(userService.existsByEmail(email)==true){
             throw new BadRequestException("이미 사용중인 아이디 입니다.");
         }else{
-            return ResponseEntity.ok)("사용 가능한 아이디 입니다.");
+            return ResponseEntity.ok("사용 가능한 아이디 입니다.");
         }
     }
 
