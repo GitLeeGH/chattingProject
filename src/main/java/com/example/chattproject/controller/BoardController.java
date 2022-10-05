@@ -4,9 +4,14 @@ import com.example.chattproject.domain.entity.Board;
 import com.example.chattproject.dto.*;
 import com.example.chattproject.repository.BoardRepository;
 import com.example.chattproject.service.BoardService;
+
+import com.example.chattproject.service.ChatService;
+import com.example.chattproject.vo.ChatMEmberListVO;
+import com.example.chattproject.vo.ChatRoomVO;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -17,12 +22,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -33,6 +40,9 @@ public class BoardController {
 
     @Value("${com.example.upload.path}")    //import 시에 springframework으로 시작하는 Value
     private String uploadPath;
+
+    @Autowired
+    private ChatService chatService;
 
     private final BoardService boardService;
 
@@ -59,7 +69,7 @@ public class BoardController {
     }
 
     @PostMapping("/register")
-    public String registerPost(@Valid BoardDTO boardDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+    public String registerPost(@Valid BoardDTO boardDTO, Principal principal, ChatRoomVO chatRoomVO, ChatMEmberListVO chatMEmberListVO, BindingResult bindingResult, RedirectAttributes redirectAttributes){
 
         log.info("board POSt register.............");
 
@@ -75,6 +85,19 @@ public class BoardController {
         Long bno = boardService.register(boardDTO);
 
         redirectAttributes.addFlashAttribute("result", bno);
+
+
+        // 채팅방 개설
+        System.out.println("principal : " + principal.getName());
+        chatRoomVO.setRoomId(bno);
+        System.out.println("bno : " + bno);
+        System.out.println("chatRoomVO" + chatRoomVO);
+        chatService.creatRoom(chatRoomVO);
+
+        // 방장 채팅방 참가
+        chatMEmberListVO.setRoomId(bno);
+        chatMEmberListVO.setMemberId(principal.getName());
+        chatService.joinRoomMaster(chatMEmberListVO);
 
         return "redirect:/board/list";
     }

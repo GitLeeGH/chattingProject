@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content1">
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">채팅</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-nav">
+                        <li><a th:href="@{/index}">Home</a></li>
+                        <li><a th:href="@{/index}">채팅 목록</a></li>
+                        <li>채팅</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Breadcrumbs -->
+    <div class="chatting-container">
+        <div class="chatting-box">
+            <div class="chatting-title">
+                <h4 th:text="${selectChattingDetail.title}">
+            </div>
+            <!--id="msgArea"-->
+            <div class="chatting-scroll" id="msgArea">
+                <ul th:each="selectMsg : ${selectMessage}" class="single-chat-head">
+
+                    <!--로그인한 사람이 받는 메세지-->
+                    <li th:if="${session.login.memberId!=selectMsg.sendId}" class="right">
+                        <div>
+                            <img th:src="${selectMsg.fullFilePath}" alt="#">
+                            <p style='margin-top:20px; margin-right:20px;' th:text="${selectMsg.sendId}"></p>
+                            <p th:text="${selectMsg.message}" class="text recive-chat"></p>
+                            <span th:text="${#dates.format(selectMsg.regdate, 'HH:mm')}" class="time">9:51 AM</span>
+                        </div>
+                    </li>
+
+                    <!--로그인된 사람이 보낸 메세지-->
+                    <li th:if="${session.login.memberId==selectMsg.sendId}" class="right"
+                        style="display:flex; justify-content: flex-end;">
+                        <div>
+                            <!--<img th:src="${selectMsg.fullFilePath}"alt="#" style="height:50px; width:50px;">-->
+                            <span th:text="${#dates.format(selectMsg.regdate, 'HH:mm')}" class="time"
+                                  style="color: #926a9d; margin-right: 1rem;">9:51 AM</span>
+                            <p th:text="${selectMsg.message}" class="text send-chat"></p>
+                        </div>
+                    </li>
+                </ul>
+                <div>
+                </div>
+            </div>
+            <div>
+                <div class="input-group mb-3">
+                    <input type="text" id="msg" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="button-send">전송</button>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <!-- End Chat List -->
+        </div>
+    </div>
+
+
+</div>
+<script layout:fragment="script" th:inline="javascript">
+</script>
+</html>

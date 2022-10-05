@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/html"
+      itemscope itemtype="http://schema.org/WebPage"
+      layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content1">
+
+    <div class="modal fade" id="chatModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="staticBackdropLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="user-container modal-header">
+                    <label class="modal-title" id="staticBackdropLabel" for="nickname">[[${room.roomName}]]</label>
+<!--                    <span type="text" id="nickname" th:text="${session['loginNick']}"-->
+<!--                          th:value="${session['loginNick']}"></span>-->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="display-container modal-body" style="height: 1000px">
+                    <ul class="chatting-list" id="msgArea">
+                    </ul>
+                </div>
+
+                <div class="input-container modal-footer">
+                <span>
+                    <textarea type="text" id="msg" class="chatting-input form-control"
+                              aria-label="Recipient's username"
+                              aria-describedby="button-addon2"></textarea>
+                    <button type="button" id="button-send" class="send-button">전송</button>
+                </span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="wrapper" style="margin-top: 100px;">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chatModal">채팅방 입장하기</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+<script layout:fragment="script" th:inline="javascript">
+
+    $(document).ready(function(){
+
+        var roomName = [[${room.roomName}]];
+        var roomId = [[${room.roomId}]];
+        <!--/* var username = [[${#authentication.principal.username}]]; */-->
+        <!--/*var username = [[${room.chatMentor}]]; */-->
+        const username = [[${#authentication.principal.username}]]
+        console.log("username : " + username)
+
+
+
+        console.log(roomName + ", " + roomId + ", " + username);
+
+        var sockJs = new SockJS("/stomp/chat");
+        //1. SockJS를 내부에 들고있는 stomp를 내어줌
+        var stomp = Stomp.over(sockJs);
+
+        //2. connection이 맺어지면 실행
+        stomp.connect({}, function (){
+            console.log("STOMP Connection")
+
+            //4. subscribe(path, callback)으로 메세지를 받을 수 있음
+            stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
+                var content = JSON.parse(chat.body);
+
+                var writer = content.writer;
+                var str = '';
+
+                if(writer === username){
+                    str = "<div class='col-6'>";
+                    str += "<div class='alert alert-secondary'>";
+                    str += "<b>" + writer + " : " + content.message + "</b>";
+                    str += "</div></div>";
+                    $("#msgArea").append(str);
+                }
+                else{
+                    str = "<div class='col-6'>";
+                    str += "<div class='alert alert-warning'>";
+                    str += "<b>" + writer + " : " + content.message + "</b>";
+                    str += "</div></div>";
+                    $("#msgArea").append(str);
+                }
+
+                $("#msgArea").append(str);
+            });
+
+            //3. send(path, header, message)로 메세지를 보낼 수 있음
+            stomp.send('/pub/chat/enter', {}, JSON.stringify({roomId: roomId, writer: username}))
+        });
+
+        $("#button-send").on("click", function(e){
+            var msg = document.getElementById("msg");
+
+            console.log(username + ":" + msg.value);
+            stomp.send('/pub/chat/message', {}, JSON.stringify({roomId: roomId, message: msg.value, writer: username}));
+            msg.value = '';
+        });
+    });
+
+
+
+</script>
+
+</html>

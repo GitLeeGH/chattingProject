@@ -43,7 +43,14 @@
                                th:value="${#temporals.format(dto.modDate, 'yyyy-MM-dd HH:mm:ss')}" readonly>
                     </div>
 
-                    <div class="my-4">
+
+                    <div class="my-6">
+                        <!--참가하기 버튼 : 로그인 했을 경우-->
+                        <div class="float-right">
+                        <button type="button" class="btn btn-danger" style="margin-left: 2px; " th:onclick="|window.location.href='@{/roomJoin(roomId=${dto.bno})}'|">
+                            채팅하기
+                        </button>
+                        </div>
                         <div class="float-end" th:with="link = ${pageRequestDTO.getLink()}">
                             <a th:href="|@{/board/list}?${link}|" class="text-decoration-none">
                                 <button type="button" class="btn btn-primary">List</button>

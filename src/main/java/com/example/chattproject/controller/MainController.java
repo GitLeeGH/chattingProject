@@ -15,4 +15,17 @@ public class MainController {
 
     }
 
+    @GetMapping("/mentor")
+    public String mentor(){
+
+        return "mentoring/myMentoring";
+    }
+
+    @GetMapping("/roomRoom")
+    public String room(){
+
+        return "room";
+    }
+
+
 }
