@@ -146,6 +146,7 @@
 <script layout:fragment="script" th:inline="javascript">
 
     const bno = [[${dto.bno}]]
+    const writer = [[${dto.writer}]]
 
     // console.log(get1(bno))
 
@@ -155,7 +156,7 @@
 
 
     function printList(dtoList) {    // 댓글 목록 출력
-
+        console.log(writer);
         let str = '';
 
         if (dtoList && dtoList.length > 0) {

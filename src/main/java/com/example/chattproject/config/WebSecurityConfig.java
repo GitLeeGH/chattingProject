@@ -26,21 +26,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http
-                .authorizeRequests()
-                .antMatchers("/","/account/register","/board", "/css/**", "/fonts/**", "/img/**", "/js/**", "/scss/**", "/vender/**").permitAll()
-                //.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+
+        http.authorizeRequests()
+                .antMatchers("/", "/account/register", "/board", "/css/**", "/fonts/**", "/img/**", "/js/**", "/scss/**", "/vender/**").permitAll()
+                .antMatchers("/account/admin/**", "/idiot/list", "/idiot/detail/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
-                .and()
-                .formLogin()
+                .and();
+
+        http.formLogin()
                 .loginPage("/account/login")
                 .defaultSuccessUrl("/", true)
                 .permitAll()
-                .and()
-                .logout()
+                .and();
+
+        http.logout()
                 .logoutSuccessUrl("/")
+                .deleteCookies("JSESSIONID", "remember-me")
                 .permitAll();
+
+
+        http.sessionManagement()
+                .sessionFixation().changeSessionId()
+                .invalidSessionUrl("/account/loginPage")
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false);
+
     }
+
+
+
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth)
@@ -63,4 +77,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+
+
+
 }
