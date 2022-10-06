@@ -3,13 +3,12 @@ package com.example.chattproject.domain.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,16 +17,14 @@ public class User {
     @Column(unique = true)
     private String email;
 
-//    @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해주세요.")
+    //    @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해주세요.")
 //    @Pattern(regexp="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}")
     private String password;
-    private Boolean enabled;
-    private Integer number;
 
     @ManyToMany
     @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
+            name = "user_role", //조인 테이블명
+            joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"), //외래키
+            inverseJoinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")) //반대 외래키
+    private List<Role> roles;
 }

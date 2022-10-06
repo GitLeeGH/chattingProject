@@ -1,6 +1,7 @@
 package com.example.chattproject.config;
 
 
+import com.example.chattproject.controller.CustomLoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -29,9 +31,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http.authorizeRequests()
-                .antMatchers("/", "/account/register", "/board", "/css/**", "/fonts/**", "/img/**", "/js/**", "/scss/**", "/vender/**").permitAll()
-                .antMatchers("/account/admin/**", "/idiot/list", "/idiot/detail/**").access("hasRole('ROLE_ADMIN')")
-
+                .antMatchers("/", "/account/**", "/board", "/css/**", "/fonts/**", "/img/**", "/js/**", "/scss/**", "/vender/**").permitAll()
+//                .antMatchers("/account/admin/**", "/idiot/list", "/idiot/detail/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
                 .and();
 
@@ -55,25 +56,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-
-
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource)
-                .passwordEncoder(passwordEncoder())
-                // 인증처리(user 테이블)
-                .usersByUsernameQuery("select email, password, enabled "
-                        + "from user " // 테이블 이름
-                        + "where email = ?")
-                // 권한처리(user_role 테이블)
-                .authoritiesByUsernameQuery("select u.email, r.name "
-                        + "from user_role ur inner join user u on ur.user_id = u.id "
-                        + "inner join role r on ur.role_id = r.id "
-                        + "where u.email = ?");
-    }
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.jdbcAuthentication()
+//                .dataSource(dataSource)
+//                .passwordEncoder(passwordEncoder())
+//                // 인증처리(user 테이블)
+//                .usersByUsernameQuery("select email, password"
+//                        + "from user " // 테이블 이름
+//                        + "where email = ?");
+//                // 권한처리(user_role 테이블)
+////                .authoritiesByUsernameQuery("select u.email, r.name "
+////                        + "from user_role ur inner join user u on ur.user_id = u.id "
+////                        + "inner join role r on ur.role_id = r.id "
+////                        + "where u.email = ?");
+//    }
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -81,6 +78,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+    @Bean
+    public AuthenticationSuccessHandler loginSuccessHandler() {
+        return new CustomLoginSuccessHandler();
+    }
 
 
 

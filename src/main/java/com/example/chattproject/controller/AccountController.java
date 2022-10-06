@@ -1,16 +1,25 @@
 package com.example.chattproject.controller;
 
-import com.example.chattproject.exception.BadRequestException;
-import com.example.chattproject.repository.UserRepository;
 import com.example.chattproject.domain.entity.User;
+import com.example.chattproject.repository.UserRepository;
 import com.example.chattproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Controller
 @RequestMapping("/account")
@@ -54,15 +63,68 @@ public class AccountController {
         return "account/admin";
     }
 
-    // 아이디 중복 체크
-    @GetMapping("/email/check")
-    public ResponseEntity<?> checkEmailDuplication(@RequestParam(value="email")String email) throws BadRequestException {
-        System.out.println(email);
-        if(userService.existsByEmail(email)==true){
-            throw new BadRequestException("이미 사용중인 아이디 입니다.");
-        }else{
-            return ResponseEntity.ok("사용 가능한 아이디 입니다.");
+
+    @Target({TYPE, FIELD, ANNOTATION_TYPE})
+    @Retention(RUNTIME)
+    @Constraint(validatedBy = EmailValidator.class)
+    @Documented
+    public @interface ValidEmail {
+        String message() default "Invalid email";
+        Class<?>[] groups() default {};
+        Class<? extends Payload>[] payload() default {};
+    }
+
+
+
+    public class EmailValidator
+            implements ConstraintValidator<ValidEmail, String> {
+
+        private Pattern pattern;
+        private Matcher matcher;
+        private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$";
+        @Override
+        public void initialize(ValidEmail constraintAnnotation) {
+        }
+        @Override
+        public boolean isValid(String email, ConstraintValidatorContext context){
+            return (validateEmail(email));
+        }
+        private boolean validateEmail(String email) {
+            pattern = Pattern.compile(EMAIL_PATTERN);
+            matcher = pattern.matcher(email);
+            return matcher.matches();
         }
     }
+
+    @Target({TYPE,ANNOTATION_TYPE})
+    @Retention(RUNTIME)
+    @Constraint(validatedBy = PasswordMatchesValidator.class)
+    @Documented
+    public @interface PasswordMatches {
+        String message() default "Passwords don't match";
+        Class<?>[] groups() default {};
+        Class<? extends Payload>[] payload() default {};
+    }
+
+    public class PasswordMatchesValidator
+            implements ConstraintValidator<PasswordMatches, Object> {
+
+        @Override
+        public void initialize(PasswordMatches constraintAnnotation) {
+        }
+        @Override
+        public boolean isValid(Object obj, ConstraintValidatorContext context){
+//            User user = (User) obj;
+            return true/*user.getPassword().equals(user.getMatchingPassword())*/;
+        }
+    }
+
+    @RequestMapping(value = "/email/check", method = RequestMethod.POST)
+    @ResponseBody
+    public Boolean checkEmailDuplication(@RequestParam(value="email")String email) /*throws BadRequestException*/ {
+        return userService.existsByEmail(email);
+    }
+
+
 
 }

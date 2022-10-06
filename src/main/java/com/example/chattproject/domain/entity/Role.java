@@ -9,15 +9,27 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(name = "role")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; //index
 
-    private String name;
+    private String rolename; //id
 
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
+
+    public Role(String rolenames){
+        this.rolename = rolenames;
+    }
+
+    public Role(Long id, String rolename) {
+        this.id = id;
+        this.rolename = rolename;
+    }
+
+    //    @ManyToMany(mappedBy = "roles")
+//    private List<User> users;
 }

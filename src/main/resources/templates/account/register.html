@@ -10,7 +10,9 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <link th:href="@{/css/signin.css}" rel="stylesheet">
-
+<!--  <script src="https://code.jquery.com/jquery-3.6.0.min.js"-->
+<!--          integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>-->
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
   <title>Login</title>
 </head>
 
@@ -21,8 +23,8 @@
   <h1 class="h3 mb-3 font-weight-normal">회원가입</h1>
 <!--  <label for="email" class="sr-only">이메일을 입력하세요.</label>-->
   <div class="input-group mb-3">
-    <input type="email" class="form-control" placeholder="이메일을 입력하세요." id="email" name="email" required autofocus aria-describedby="basic-addon2">
-    <span class="input-group-text" type="button" id="basic-addon2">중복체크</span>
+    <input type="email" class="form-control" placeholder="이메일을 입력하세요." id="email" name="email" required autofocus aria-describedby="overlappedID">
+    <span class="input-group-text" type="button" id="overlappedID">중복체크</span>
   </div>
 
 <!--  <div class="row">-->
@@ -34,8 +36,8 @@
 
   <span id="olmessage"></span>
 
-  <d id="idAvailable" class="valid-feedback" style="display: none;"></d>
-  <d id="idNotAvailable" class="invalid-feedback" style="display: none;"></d>
+<!--  <d id="idAvailable" class="valid-feedback" style="display: none;"></d>-->
+<!--  <d id="idNotAvailable" class="invalid-feedback" style="display: none;"></d>-->
 
   <label for="inputPassword" class="sr-only">Password</label>
   <input type="password" id="inputPassword" name="password" class="form-control" placeholder="특수문자 포함, 10~12자리" required>
@@ -47,58 +49,136 @@
   <button class="btn btn-lg btn-primary btn-block" id="signup" type="submit">회원가입</button>
   <p class="mt-5 mb-3 text-muted">&copy; 2017-2020</p>
 </form>
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"-->
+<!--        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"-->
+<!--        crossorigin="anonymous"></script>-->
 
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+<body>
+<button onclick="onButtonClicked()">붐</button>
+<h2 id="boom">0</h2>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+<script
+        src="https://code.jquery.com/jquery-2.2.4.js"
+        integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+        crossorigin="anonymous"></script>
 <script>
-  // $("#overlappedID").click(function(){
-  //   $("#signup").attr("type", "button");
-  //   const email = $("#email").val();
-  //   $.ajax({
-  //     type: "get",
-  //     async: false,
-  //     url: "http://localhost:8080/account/email/check",
-  //     data: {email: email},
-  //     success: function (data) {
-  //       if(data == 1) {
-  //         $("#olmessage").text("이미 사용중인 ID 입니다.");
-  //         $("#olmessage").addClass("olmessagef");
-  //         $("#olmessage").removeClass("olmessaget");
-  //       }else {
-  //         $("#olmessage").text("사용 가능한 ID 입니다.");
-  //         $("#olmessage").addClass("olmessaget");
-  //         $("#olmessage").removeClass("olmessagef");
-  //         $("#signup").attr("type", "submit");
+
+  // window.onload = function() {
+  //   var httpRequest;
+  //   //호출 버튼을 클릭하였을 때, 데이터를 요청하고 받아오는 Ajax 구현 부분
+  //   document.getElementById("overlappedID").addEventListener('click', () => {
+  //     httpRequest = new XMLHttpRequest();
+  //     httpRequest.onreadystatechange = () => {
+  //       if (httpRequest.readyState === XMLHttpRequest.DONE) {
+  //         if (httpRequest.status === 200) {
+  //           document.getElementById("memberTable").innerHTML = httpRequest.response;
+  //         } else {
+  //           alert('Request Error!');
+  //         }
   //       }
-  //     }
-  //   })
+  //     };
+  //     httpRequest.open('POST', 'email/check');
+  //     httpRequest.send();
+  //   });
+  // }
+
+
+
+
+
+  $("#overlappedID").click(function(){
+    // var httpRequest;
+    // // $("#signup").attr("type", "button");
+    const email = $("#email").val();
+    // console.log(email)
+    // httpRequest = new XMLHttpRequest();
+    // httpRequest.onreadystatechange = () => {
+    //   if (httpRequest.readyState === XMLHttpRequest.DONE) {
+    //     if (httpRequest.status === 200) {
+    //       console.log(httpRequest.response);
+    //       //document.getElementById("memberTable").innerHTML = httpRequest.response;
+    //     } else {
+    //       alert('Request Error!');
+    //     }
+    //   }
+    // };
+    // httpRequest.open('POST', 'email/check');
+    // httpRequest.send();
+    // axios({
+    //   method: 'post', //통신 방식
+    //   url: '/account/email/check', //통신할 페이지
+    //   data: {email: email} //인자로 보낼 데이터
+    // })
+    //         .then(response=>{
+    //
+    //           console.log(response);
+    //         })
+    //         .catch(error=>{
+    //
+    //           console.log(error);
+    //         })
+    $.ajax({
+      async:true,
+      type: "POST",
+      url: "email/check",
+      data: {email: email},
+      // beforeSend : function(xhr){
+      //   xhr.setRequestHeader($("meta[name='_csrf_header']").attr("content"), $("meta[name='_csrf']").attr("content"));
+      // },
+      success:function(data){
+        if (data == true){
+          alert("아이디가 존재합니다.")
+        }else{
+          console.log("아이디 생성 가능")
+        }
+      }, error: function (){
+
+      }
+    })
+    // .done(function (data) {
+    //   console.log(data)
+
+        // if(data == 1) {
+        //   $("#olmessage").text("이미 사용중인 ID 입니다.");
+        //   $("#olmessage").addClass("olmessagef");
+        //   $("#olmessage").removeClass("olmessaget");
+        // }else {
+        //   $("#olmessage").text("사용 가능한 ID 입니다.");
+        //   $("#olmessage").addClass("olmessaget");
+        //   $("#olmessage").removeClass("olmessagef");
+        //   $("#signup").attr("type", "submit");
+        // }
+    })
+
   // });
-  $.ajax({
-    url: '/account/email/check',
-    type: 'GET',
-    contentType: 'application/json',
-    headers: {
-      // 스프링 시큐리티를 위한 헤더 설정
-      "X-CSRF-TOKEN": $("meta[name='_csrf']").attr("content")
-    },
-    data: {
-      memberId: $('#memberId').val()
-    },
-    success: function (result) {
-      // 성공 시 실패 메시지 hide, 성공 메시지 show
-      $('#idNotAvailable').hide();
-      $('#idAvailable').show().text(result).append($('<br />'));
-    }, error: function(error) {
-      // 실패 시 실패 메시지 show, 성공 메시지 hide
-      $('#idAvailable').hide();
-      $('#idNotAvailable').show().text('이미 사용중인 아이디 입니다.').append($('<br />'));
-    }
-  });
-  출처: https://juran-devblog.tistory.com/40 [란 개발일지:티스토리]
+  // $.ajax({
+  //   url: '/account/email/check',
+  //   type: 'GET',
+  //   contentType: 'application/json',
+  //   headers: {
+  //     // 스프링 시큐리티를 위한 헤더 설정
+  //     "X-CSRF-TOKEN": $("meta[name='_csrf']").attr("content")
+  //   },
+  //   data: {
+  //     memberId: $('#memberId').val()
+  //   },
+  //   success: function (result) {
+  //     // 성공 시 실패 메시지 hide, 성공 메시지 show
+  //     $('#idNotAvailable').hide();
+  //     $('#idAvailable').show().text(result).append($('<br />'));
+  //   }, error: function(error) {
+  //     // 실패 시 실패 메시지 show, 성공 메시지 hide
+  //     $('#idAvailable').hide();
+  //     $('#idNotAvailable').show().text('이미 사용중인 아이디 입니다.').append($('<br />'));
+  //   }
+  // });
+
 </script>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
@@ -106,5 +186,6 @@
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
 </body>
+
 
 </html>
