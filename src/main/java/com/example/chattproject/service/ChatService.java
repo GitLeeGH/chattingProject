@@ -35,7 +35,11 @@ public interface ChatService {
 
     ChatRoomEntity creatChatRoom1(ChatRoomEntity chatRoomEntity);
 
-    void createChatRoomDTO(String name, String memberNick, Long password);
+    void createChatRoomDTO(String name, String memberNick, Long password, String writer);
 
     Object findAllRooms();
+
+    Object findRoomBySeller(String seller);
+
+    Object findRoomByBuyer(String seller);
 }

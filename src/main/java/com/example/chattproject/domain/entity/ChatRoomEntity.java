@@ -27,19 +27,21 @@ public class ChatRoomEntity {
     @Column
     private Long password;
 
+    @Column
+    private String buyer;
 
     @Column
-    private String chatMentor;
+    private String seller;
 
     @OneToMany(mappedBy = "chatRoomEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessageEntity> chatMessageEntityList = new ArrayList<>();
 
 
-    public static ChatRoomEntity toChatRoomEntity(String roomName, String roomId, String chatMentor,Long password){
+    public static ChatRoomEntity toChatRoomEntity(String roomName, String roomId, String seller,Long password){
         ChatRoomEntity chatRoomEntity = new ChatRoomEntity();
         chatRoomEntity.setRoomName(roomName);
         chatRoomEntity.setRoomId(roomId);
-        chatRoomEntity.setChatMentor(chatMentor);
+        chatRoomEntity.setSeller(seller);
         chatRoomEntity.setPassword(password);
         return chatRoomEntity;
     }

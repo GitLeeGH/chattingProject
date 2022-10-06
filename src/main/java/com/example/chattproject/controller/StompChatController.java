@@ -36,8 +36,10 @@ public class StompChatController {
         System.out.println(chatList);
         if(chatList != null){
             for(ChatMessageDetailDTO c : chatList ){
-                message.setWriter(c.getWriter());
-                message.setMessage(c.getMessage());
+                ChatMessageDetailDTO messageDetailDTO = new ChatMessageDetailDTO();
+                messageDetailDTO.setWriter(c.getWriter());
+                messageDetailDTO.setMessage(c.getMessage());
+                template.convertAndSend("/sub/chat/room/" + message.getRoomId(), messageDetailDTO);
             }
         }
 

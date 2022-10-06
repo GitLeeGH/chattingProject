@@ -14,9 +14,11 @@ import java.util.*;
 @NoArgsConstructor
 public class ChatRoomDTO {
 
-    private String chatMentor;
+    private String seller;
     private String roomId;
     private String name;
+
+    private String buyer;
 
     private Long password;
 

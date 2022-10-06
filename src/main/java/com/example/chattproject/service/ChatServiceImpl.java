@@ -112,12 +112,13 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public void createChatRoomDTO(String roomName, String memberNick, Long password) {
+    public void createChatRoomDTO(String roomName, String memberNick, Long password, String writer) {
 
         ChatRoomEntity chatRoomEntity = new ChatRoomEntity();
         chatRoomEntity.setRoomId(UUID.randomUUID().toString());
+        chatRoomEntity.setBuyer(memberNick);
         chatRoomEntity.setRoomName(roomName);
-        chatRoomEntity.setChatMentor(memberNick);
+        chatRoomEntity.setSeller(writer);
         chatRoomEntity.setPassword(password);
         System.out.println("저장 완료");
         chatRoomEntityRepository.save(chatRoomEntity);
@@ -130,6 +131,16 @@ public class ChatServiceImpl implements ChatService{
 
         return chatRoomEntityRepository.findAll();
 
+    }
+
+    @Override
+    public Object findRoomBySeller(String seller) {
+        return chatRoomEntityRepository.findAllBySeller(seller);
+    }
+
+    @Override
+    public Object findRoomByBuyer(String seller) {
+        return chatRoomEntityRepository.findAllByBuyer(seller);
     }
 
 
