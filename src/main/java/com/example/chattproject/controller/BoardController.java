@@ -87,17 +87,17 @@ public class BoardController {
         redirectAttributes.addFlashAttribute("result", bno);
 
 
-        // 채팅방 개설
-        System.out.println("principal : " + principal.getName());
-        chatRoomVO.setRoomId(bno);
-        System.out.println("bno : " + bno);
-        System.out.println("chatRoomVO" + chatRoomVO);
-        chatService.creatRoom(chatRoomVO);
-
-        // 방장 채팅방 참가
-        chatMEmberListVO.setRoomId(bno);
-        chatMEmberListVO.setMemberId(principal.getName());
-        chatService.joinRoomMaster(chatMEmberListVO);
+//        // 채팅방 개설
+//        System.out.println("principal : " + principal.getName());
+//        chatRoomVO.setRoomId(bno);
+//        System.out.println("bno : " + bno);
+//        System.out.println("chatRoomVO" + chatRoomVO);
+//        chatService.creatRoom(chatRoomVO);
+//
+//        // 방장 채팅방 참가
+//        chatMEmberListVO.setRoomId(bno);
+//        chatMEmberListVO.setMemberId(principal.getName());
+//        chatService.joinRoomMaster(chatMEmberListVO);
 
         return "redirect:/board/list";
     }

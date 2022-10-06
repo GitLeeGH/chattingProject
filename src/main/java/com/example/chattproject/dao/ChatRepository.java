@@ -70,10 +70,10 @@ public class ChatRepository {
     }
 
     // 채팅방 인원 -1
-    public void minusUserCnt(String roomId){
-        ChatRoom room = chatRoomMap.get(roomId);
-        room.setUserCount(room.getUserCount() -1);
-    }
+//    public void minusUserCnt(String roomId){
+//        ChatRoom room = chatRoomMap.get(roomId);
+//        room.setUserCount(room.getUserCount() -1);
+//    }
 
     // maxUserCnt 에 따른 채팅방 입장 여부
     public boolean chkRoomUserCnt(String roomID){

@@ -110,7 +110,7 @@ public class ChatController {
         log.info("headAccessor {}", headerAccessor);
 
         // 채팅방 유저 -1
-        repository.minusUserCnt(roomId);
+//        repository.minusUserCnt(roomId);
 
         // 채팅방 유저 리스트에서 UUID 유저 닉네임 조회 및 리스트에서 유저 삭제
         String username = repository.getUserName(roomId, userUUID);
@@ -188,12 +188,17 @@ public class ChatController {
 //    }
 
 
-    //나의 멘토링 조회
+    //나의 채팅방 조회
     @GetMapping("/mentoring/myMentoring/{memberId}")
-    public String myMentoring(@PathVariable ("memberId") String memberId,Model model){
+    public String myMentoring(@PathVariable ("memberId") String memberId,Model model,Principal principal){
 
-        //채팅방 목록 불러오기
-        model.addAttribute("rooms", cs.findAllRooms());
+        String seller = principal.getName();
+        // 채팅창 목록 불러오기
+        model.addAttribute("rooms1",cs.findRoomByBuyer(seller));
+        model.addAttribute("rooms",cs.findRoomBySeller(seller));
+
+        System.out.println(model);
+
 
 
         return "mentoring/myMentoring";
@@ -201,13 +206,13 @@ public class ChatController {
 
     //채팅방 개설
     @PostMapping(value = "/room")
-    public String create(@RequestParam String roomName, @RequestParam Long password, HttpSession session,Model model, Principal principal){
+    public String create(@RequestParam String roomName, @RequestParam Long password, @RequestParam String writer, HttpSession session,Model model, Principal principal){
 //        Long memberId = (Long) session.getAttribute(LOGIN_ID);
         String memberNick = principal.getName();
 
         log.info("# Create Chat Room , name: " + roomName);
 
-        cs.createChatRoomDTO(roomName,memberNick,password);
+        cs.createChatRoomDTO(roomName,memberNick,password,writer);
         System.out.println("저장완료");
 
         return "redirect:/mentoring/myMentoring/"+principal.getName();
@@ -226,7 +231,7 @@ public class ChatController {
         ChatRoomEntity chatRoomEntity = (ChatRoomEntity) cs.findRoomByRoomId(roomId);
         ChatRoomDTO chatRoomDTO = new ChatRoomDTO();
         chatRoomDTO.setRoomId(chatRoomEntity.getRoomId());
-        chatRoomDTO.setChatMentor(chatRoomEntity.getChatMentor());
+        chatRoomDTO.setSeller(chatRoomEntity.getSeller());
         chatRoomDTO.setName(chatRoomEntity.getRoomName());
         chatRoomDTO.setPassword(chatRoomEntity.getPassword());
 

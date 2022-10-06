@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class ChatRoomDetailDTO {
 
     private Long chatRoomId;
-    private String chatMentor;
+    private String seller;
     private String roomId;
     private String name;
 
